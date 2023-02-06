@@ -1,0 +1,105 @@
+DATASET:
+  DATASET: 'mix_smpl_mmstyle'
+  SET_LIST:
+    - ROOT: '../HybrIK_dataset/h36m/'
+      TEST_SET: 'Sample_20_test_Human36M_smpl'
+      TRAIN_SET: 'Sample_5_train_Human36M_smpl_leaf_twist'
+    - ROOT: '../HybrIK_dataset/coco/'
+      TRAIN_SET: 'train2017'
+    - ROOT: '../HybrIK_dataset/3dhp/'
+      TRAIN_SET: 'train_v2'
+    - ROOT: '../HybrIK_dataset/pw3d/'
+      TRAIN_SET: '3DPW_train_our'
+  configs:
+    - type: 'HybrIKHumanImageDataset'
+      dataset_name: 'h36m'
+      data_prefix: 'data'
+      pipeline: train_pipeline
+      ann_file: 'hybrik_h36m_train.npz'
+    - type: 'HybrIKHumanImageDataset'
+      dataset_name: 'mpi_inf_3dhp'
+      data_prefix: 'data'
+      pipeline: train_pipeline
+      ann_file: 'hybrik_mpi_inf_3dhp_train.npz'
+    - type: 'HybrIKHumanImageDataset'
+      dataset_name: 'coco'
+      data_prefix: 'data'
+      pipeline: train_pipeline
+      ann_file: 'hybrik_coco_2017_train.npz'
+    - type: 'HybrIKHumanImageDataset'
+      dataset_name: 'pw3d'
+      data_prefix: 'data'
+      pipeline: train_pipeline
+      ann_file: 'hybrik_pw3d_train.npz'
+  PARTITION: [0.3, 0.1, 0.4, 0.2]
+  PROTOCOL: 2
+  FLIP: True
+  ROT_FACTOR: 30
+  SCALE_FACTOR: 0.3
+  NUM_JOINTS_HALF_BODY: 8
+  PROB_HALF_BODY: -1
+  COLOR_FACTOR: 0.2
+  OCCLUSION: True
+  samples_per_gpu: 24
+  workers_per_gpu: 0
+  num_gpus: 1
+MODEL:
+  TYPE: 'IKOL24'
+  EFFICIENT: False
+  PRETRAINED: ''
+  TRY_LOAD: ''
+  IMAGE_SIZE:
+  - 256
+  - 256
+  HEATMAP_SIZE:
+  - 64
+  - 64
+  NUM_JOINTS: 24
+  NUM_DECONV_FILTERS:
+  - 256
+  - 256
+  - 256
+  NUM_LAYERS: 34
+  EXTRA:
+    SIGMA: 2
+    BACKBONE: 'resnet'
+    CROP: 'padding'
+    AUGMENT: 'none'
+    PRESET: 'simple_smpl_3d'
+    DEPTH_DIM: 64
+  POST:
+    NORM_TYPE: 'softmax'
+#  OUTPUT_THETA: False   #same
+LOSS:
+  TYPE: 'L1LossDimSMPL'
+  ELEMENTS:
+    OUTPUT_THETA: True  #same
+    OUTPUT_THETA_EPOCH: 1  #same
+    BETA_WEIGHT: 1
+    BETA_REG_WEIGHT: 0
+    PHI_REG_WEIGHT: 0.0001
+    LEAF_REG_WEIGHT: 0
+    TWIST_WEIGHT: 0.01
+    THETA_WEIGHT: 0.01
+    UVD24_WEIGHT: 1
+    XYZ24_WEIGHT: 0
+    XYZ_SMPL24_WEIGHT: 0
+    XYZ_SMPL17_WEIGHT: 0
+    VERTICE_WEIGHT: 0
+TEST:
+  HEATMAP2COORD: 'coord'
+TRAIN:
+  WORLD_SIZE: 1
+  BATCH_SIZE: 24
+  BEGIN_EPOCH: 1
+  END_EPOCH: 400
+  OPTIMIZER: 'adam'
+  LR: 0.001  # initial
+  LR_FACTOR: 0.1
+  LR_STEP:
+  - 50
+  - 120
+  DPG_MILESTONE: 140
+  DPG_STEP:
+  - 160
+  - 190
