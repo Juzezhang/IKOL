@@ -61,6 +61,21 @@ CUDA_VISIBLE_DEVICES=0 python ./scripts/validate.py --batch 64 --gpus 0 --world-
 ```
 
 
+## Training
+
+Our approach incorporates two distinct data loader formats, sourced from the [HybrIK](https://github.com/Jeff-sjtu/HybrIK) repository and [mmhuman3d](https://github.com/open-mmlab/mmhuman3d). For the fine-tuning process, we have utilized the HybrIK loader. In addition, we train our own model from the stretch with mmloader. Here two implement example. Below are examples of both implementations.
+
+Training with hybrik loader(only finetune):
+``` bash
+python ./scripts/train_hybrikloader.py -nThreads 0 --launcher pytorch --rank 0 --dist-url tcp://127.0.0.1:23456 --exp-id train_res34 --cfg ./configs/IKOL_resnet34_hybrikloader_finetune.yaml --seed 123123
+```
+
+Training with mmloader:
+``` bash
+python ./scripts/train_mmloader.py -nThreads 0 --launcher pytorch --rank 0 --dist-url tcp://127.0.0.1:23456 --exp-id train_res34 --cfg ./configs/IKOL_resnet34_mmloader.yaml --seed 123123
+```
+
+
 ## Acknowledgement
 The implementation was heavily built upon [HybrIK](https://github.com/Jeff-sjtu/HybrIK) and [mmhuman3d](https://github.com/open-mmlab/mmhuman3d). We thank the authors for their generosity to release code.
 
